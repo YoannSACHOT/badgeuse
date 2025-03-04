@@ -32,11 +32,12 @@ jobs:
         run: mvn clean verify jacoco:report --no-transfer-progress
 
       - name: Analyse SonarQube / SonarCloud
-        uses: SonarSource/sonarcloud-github-action@master
+        uses: SonarSource/sonarqube-scan-action@v5.0.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >
-            -Dsonar.projectKey=your_project_key
-            -Dsonar.organization=your_organization
+            -Dsonar.projectKey=badgeuse
+            -Dsonar.organization=yoannsachot
             -Dsonar.host.url=https://sonarcloud.io
+
