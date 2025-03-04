@@ -28,49 +28,41 @@ import reactor.test.StepVerifier;
 @ExtendWith(MockitoExtension.class)
 class BadgeServiceTests {
 
-  @Mock
-  private ReactiveEmployeeRepository employeeRepository;
+  @Mock private ReactiveEmployeeRepository employeeRepository;
 
-  @Mock
-  private ReactiveBadgeRepository badgeRepository;
+  @Mock private ReactiveBadgeRepository badgeRepository;
 
-  @InjectMocks
-  private BadgeService badgeService;
+  @InjectMocks private BadgeService badgeService;
 
   @Test
   void testAddBadgeRecord_Success() {
     String employeeId = "1";
-    Employee employee = Employee.builder()
-        .id(employeeId)
-        .name("John Doe")
-        .email("john@example.com")
-        .build();
+    Employee employee =
+        Employee.builder().id(employeeId).name("John Doe").email("john@example.com").build();
 
     LocalDateTime now = LocalDateTime.now();
-    BadgeDto badgeDto = BadgeDto.builder()
-        .timestamp(now)
-        .type(BadgeType.IN)
-        .build();
+    BadgeDto badgeDto = BadgeDto.builder().timestamp(now).type(BadgeType.IN).build();
 
-    BadgeRecord badgeRecord = BadgeRecord.builder()
-        .id("badgeId")
-        .employeeId(employeeId)
-        .timestamp(now)
-        .type(BadgeType.IN)
-        .build();
+    BadgeRecord badgeRecord =
+        BadgeRecord.builder()
+            .id("badgeId")
+            .employeeId(employeeId)
+            .timestamp(now)
+            .type(BadgeType.IN)
+            .build();
 
-    // Simulation du repository : l'employé est trouvé et le badge est sauvegardé
     when(employeeRepository.findById(employeeId)).thenReturn(Mono.just(employee));
     when(badgeRepository.save(any(BadgeRecord.class))).thenReturn(Mono.just(badgeRecord));
 
     Mono<BadgeRecord> result = badgeService.addBadgeRecord(employeeId, badgeDto);
 
     StepVerifier.create(result)
-        .assertNext(badgeRecord1 -> {
-          assert(badgeRecord1.getEmployeeId().equals(employeeId));
-          assert(badgeRecord1.getTimestamp().equals(now));
-          assert(badgeRecord1.getType() == BadgeType.IN);
-        })
+        .assertNext(
+            badgeRecord1 -> {
+              assert (badgeRecord1.getEmployeeId().equals(employeeId));
+              assert (badgeRecord1.getTimestamp().equals(now));
+              assert (badgeRecord1.getType() == BadgeType.IN);
+            })
         .verifyComplete();
 
     verify(employeeRepository).findById(employeeId);
@@ -80,20 +72,18 @@ class BadgeServiceTests {
   @Test
   void testAddBadgeRecord_EmployeeNotFound() {
     String employeeId = "nonexistent";
-    BadgeDto badgeDto = BadgeDto.builder()
-        .timestamp(LocalDateTime.now())
-        .type(BadgeType.IN)
-        .build();
+    BadgeDto badgeDto =
+        BadgeDto.builder().timestamp(LocalDateTime.now()).type(BadgeType.IN).build();
 
-    // Simulation : aucun employé trouvé
     when(employeeRepository.findById(employeeId)).thenReturn(Mono.empty());
 
     Mono<BadgeRecord> result = badgeService.addBadgeRecord(employeeId, badgeDto);
 
     StepVerifier.create(result)
-        .expectErrorMatches(throwable ->
-            throwable instanceof ResourceNotFoundException &&
-                throwable.getMessage().equals("Employee not found with id " + employeeId))
+        .expectErrorMatches(
+            throwable ->
+                throwable instanceof ResourceNotFoundException
+                    && throwable.getMessage().equals("Employee not found with id " + employeeId))
         .verify();
   }
 
@@ -105,31 +95,27 @@ class BadgeServiceTests {
     LocalDateTime inTime = localDate.atTime(9, 0);
     LocalDateTime outTime = localDate.atTime(17, 0);
 
-    BadgeRecord inRecord = BadgeRecord.builder()
-        .employeeId(employeeId)
-        .timestamp(inTime)
-        .type(BadgeType.IN)
-        .build();
-    BadgeRecord outRecord = BadgeRecord.builder()
-        .employeeId(employeeId)
-        .timestamp(outTime)
-        .type(BadgeType.OUT)
-        .build();
+    BadgeRecord inRecord =
+        BadgeRecord.builder().employeeId(employeeId).timestamp(inTime).type(BadgeType.IN).build();
+    BadgeRecord outRecord =
+        BadgeRecord.builder().employeeId(employeeId).timestamp(outTime).type(BadgeType.OUT).build();
 
     List<BadgeRecord> records = Arrays.asList(inRecord, outRecord);
-    when(badgeRepository.findByEmployeeIdAndDate(employeeId, date)).thenReturn(Flux.fromIterable(records));
+    when(badgeRepository.findByEmployeeIdAndDate(employeeId, date))
+        .thenReturn(Flux.fromIterable(records));
 
     Mono<TimeReport> reportMono = badgeService.calculateDailyTime(employeeId, date);
 
     StepVerifier.create(reportMono)
-        .assertNext(report -> {
-          assert(report.getEmployeeId().equals(employeeId));
-          assert(report.getDate().equals(date));
-          // Durée totale : 8 heures = 480 minutes
-          assert(report.getTotalMinutes() == 480);
-          // Suffisance : 480 minutes >= 420 minutes attendues
-          assert(report.isSufficient());
-        })
+        .assertNext(
+            report -> {
+              assert (report.getEmployeeId().equals(employeeId));
+              assert (report.getDate().equals(date));
+              // Durée totale : 8 heures = 480 minutes
+              assert (report.getTotalMinutes() == 480);
+              // Suffisance : 480 minutes >= 420 minutes attendues
+              assert (report.isSufficient());
+            })
         .verifyComplete();
   }
 
@@ -145,39 +131,29 @@ class BadgeServiceTests {
     LocalDateTime in2 = date2.atTime(9, 0);
     LocalDateTime out2 = in2.plusHours(7);
 
-    BadgeRecord record1In = BadgeRecord.builder()
-        .employeeId(employeeId)
-        .timestamp(in1)
-        .type(BadgeType.IN)
-        .build();
-    BadgeRecord record1Out = BadgeRecord.builder()
-        .employeeId(employeeId)
-        .timestamp(out1)
-        .type(BadgeType.OUT)
-        .build();
-    BadgeRecord record2In = BadgeRecord.builder()
-        .employeeId(employeeId)
-        .timestamp(in2)
-        .type(BadgeType.IN)
-        .build();
-    BadgeRecord record2Out = BadgeRecord.builder()
-        .employeeId(employeeId)
-        .timestamp(out2)
-        .type(BadgeType.OUT)
-        .build();
+    BadgeRecord record1In =
+        BadgeRecord.builder().employeeId(employeeId).timestamp(in1).type(BadgeType.IN).build();
+    BadgeRecord record1Out =
+        BadgeRecord.builder().employeeId(employeeId).timestamp(out1).type(BadgeType.OUT).build();
+    BadgeRecord record2In =
+        BadgeRecord.builder().employeeId(employeeId).timestamp(in2).type(BadgeType.IN).build();
+    BadgeRecord record2Out =
+        BadgeRecord.builder().employeeId(employeeId).timestamp(out2).type(BadgeType.OUT).build();
 
     List<BadgeRecord> records = Arrays.asList(record1In, record1Out, record2In, record2Out);
-    when(badgeRepository.findByEmployeeIdAndMonth(employeeId, month)).thenReturn(Flux.fromIterable(records));
+    when(badgeRepository.findByEmployeeIdAndMonth(employeeId, month))
+        .thenReturn(Flux.fromIterable(records));
 
     Mono<TimeReport> reportMono = badgeService.calculateMonthlyTime(employeeId, month);
 
     StepVerifier.create(reportMono)
-        .assertNext(report -> {
-          // Total attendu : 480 + 420 = 900 minutes
-          assert(report.getEmployeeId().equals(employeeId));
-          assert(report.getMonth().equals(month));
-          assert(report.getTotalMinutes() == 900);
-        })
+        .assertNext(
+            report -> {
+              // Total attendu : 480 + 420 = 900 minutes
+              assert (report.getEmployeeId().equals(employeeId));
+              assert (report.getMonth().equals(month));
+              assert (report.getTotalMinutes() == 900);
+            })
         .verifyComplete();
   }
 }

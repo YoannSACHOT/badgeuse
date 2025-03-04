@@ -19,7 +19,6 @@ public class EmployeeService {
     Employee employee = new Employee();
     employee.setName(employeeDto.getName());
     employee.setEmail(employeeDto.getEmail());
-    //TODO: Affectez d'autres propriétés nécessaires...
     return employeeRepository.save(employee);
   }
 
@@ -36,7 +35,6 @@ public class EmployeeService {
             existingEmployee -> {
               existingEmployee.setName(employeeDto.getName());
               existingEmployee.setEmail(employeeDto.getEmail());
-              // TODO: Mettez à jour les autres champs...
               return employeeRepository.save(existingEmployee);
             });
   }
