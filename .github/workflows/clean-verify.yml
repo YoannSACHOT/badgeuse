@@ -28,5 +28,15 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      - name: Tester et construire avec Maven
-        run: mvn clean verify --no-transfer-progress
+      - name: Tester, construire et générer le rapport de couverture
+        run: mvn clean verify jacoco:report --no-transfer-progress
+
+      - name: Analyse SonarQube / SonarCloud
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.projectKey=your_project_key
+            -Dsonar.organization=your_organization
+            -Dsonar.host.url=https://sonarcloud.io
