@@ -88,10 +88,8 @@ public class BadgeService {
     final int size = records.size();
     boolean skipNext = false;
 
-    // On itère jusqu'à l'avant-dernier élément pour traiter les éventuels appariements
     for (int i = 0; i < size - 1; i++) {
       if (skipNext) {
-        // On réinitialise l'indicateur et laisse la boucle incrémenter i normalement
         skipNext = false;
         continue;
       }
@@ -111,8 +109,6 @@ public class BadgeService {
       }
     }
 
-    // Si le dernier enregistrement n'a pas été traité (liste de taille impaire ou dernier
-    // enregistrement non apparié)
     if (!skipNext && size > 0) {
       BadgeRecord last = records.get(size - 1);
       logger.warn(
@@ -123,7 +119,6 @@ public class BadgeService {
   }
 
   private int calculateWorkingDaysInMonth(String month) {
-    // Calcul dynamique des jours ouvrés en excluant samedis et dimanches
     YearMonth ym = YearMonth.parse(month);
     int workingDays = 0;
     for (int day = 1; day <= ym.lengthOfMonth(); day++) {
