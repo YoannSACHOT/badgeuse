@@ -17,7 +17,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Data
 public class BadgeRecord {
 
-  @Id private String id;
+  @Id
+  private String id;
 
   @NotBlank(message = "L'ID de l'employé est requis")
   private String employeeId;
@@ -25,6 +26,6 @@ public class BadgeRecord {
   @NotNull(message = "Le timestamp est requis")
   private LocalDateTime timestamp;
 
-  @NotBlank(message = "Le type (IN/OUT) est requis")
-  private String type;
+  @NotNull(message = "Le type (IN/OUT) est requis")
+  private BadgeType type;
 }

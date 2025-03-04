@@ -1,6 +1,6 @@
 package fr.jixter.badgeuse.domain.dto;
 
-import jakarta.validation.constraints.NotBlank;
+import fr.jixter.badgeuse.domain.BadgeType;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
@@ -17,6 +17,6 @@ public class BadgeDto {
   @NotNull(message = "Le timestamp est requis")
   private LocalDateTime timestamp;
 
-  @NotBlank(message = "Le type (IN/OUT) est requis")
-  private String type;
+  @NotNull(message = "Le type (IN/OUT) est requis")
+  private BadgeType type;
 }

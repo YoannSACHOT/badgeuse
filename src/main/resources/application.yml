@@ -1,6 +1,22 @@
 spring:
   application:
-  name: badgeuse
+    name: badgeuse
   data:
     mongodb:
       uri: mongodb://localhost:27017/badgeuse
+
+springdoc:
+  swagger-ui:
+    csrf:
+      enabled: true
+  api-docs:
+    enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always

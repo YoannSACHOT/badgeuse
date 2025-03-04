@@ -11,9 +11,19 @@ public class SecurityConfig {
 
   @Bean
   public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
-    return http
-        .csrf(CsrfSpec::disable)
-        .authorizeExchange(exchange -> exchange.anyExchange().permitAll())
+    return http.csrf(CsrfSpec::disable)
+        .authorizeExchange(
+            exchange ->
+                exchange
+                    // Autoriser les endpoints Actuator et Swagger UI (à l'URL configurée)
+                    .pathMatchers(
+                        "/actuator/**",
+                        "/swagger-ui/index.html",
+                        "/swagger-ui/**",
+                        "/v3/api-docs/**")
+                    .permitAll()
+                    .anyExchange()
+                    .permitAll())
         .build();
   }
 }
