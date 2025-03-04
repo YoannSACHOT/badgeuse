@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 public interface ReactiveBadgeRepository extends ReactiveMongoRepository<BadgeRecord, String> {
 
@@ -29,4 +30,7 @@ public interface ReactiveBadgeRepository extends ReactiveMongoRepository<BadgeRe
     LocalDateTime endOfMonth = localDate.plusMonths(1).atStartOfDay();
     return findByEmployeeIdAndTimestampBetween(employeeId, startOfMonth, endOfMonth);
   }
+
+  Mono<BadgeRecord> findFirstByEmployeeIdAndTimestampLessThanEqualOrderByTimestampDesc(String employeeId, LocalDateTime timestamp);
+
 }

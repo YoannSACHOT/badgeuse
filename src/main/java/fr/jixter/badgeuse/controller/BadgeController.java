@@ -1,10 +1,13 @@
 package fr.jixter.badgeuse.controller;
 
 import fr.jixter.badgeuse.domain.BadgeRecord;
+import fr.jixter.badgeuse.domain.BadgeType;
 import fr.jixter.badgeuse.domain.dto.BadgeDto;
 import fr.jixter.badgeuse.domain.dto.TimeReport;
 import fr.jixter.badgeuse.service.BadgeService;
 import jakarta.validation.Valid;
+import java.time.LocalDateTime;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
@@ -44,4 +48,13 @@ public class BadgeController {
       @PathVariable String employeeId, @PathVariable String month) {
     return badgeService.calculateMonthlyTime(employeeId, month).map(ResponseEntity::ok);
   }
+
+  @GetMapping("/employee/{employeeId}/status")
+  public Mono<ResponseEntity<BadgeType>> getEmployeeStatus(
+      @PathVariable String employeeId,
+      @RequestParam("timestamp") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime timestamp) {
+    return badgeService.getEmployeeStatusAt(employeeId, timestamp)
+        .map(ResponseEntity::ok);
+  }
+
 }

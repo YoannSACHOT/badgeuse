@@ -10,6 +10,7 @@ import fr.jixter.badgeuse.repository.ReactiveEmployeeRepository;
 import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.Comparator;
 import java.util.List;
@@ -27,6 +28,13 @@ public class BadgeService {
 
   private final ReactiveBadgeRepository badgeRepository;
   private final ReactiveEmployeeRepository employeeRepository;
+
+  public Mono<BadgeType> getEmployeeStatusAt(String employeeId, LocalDateTime timestamp) {
+    return badgeRepository
+        .findFirstByEmployeeIdAndTimestampLessThanEqualOrderByTimestampDesc(employeeId, timestamp)
+        .map(BadgeRecord::getType)
+        .defaultIfEmpty(BadgeType.OUT); // Par défaut, on considère l'employé OUT s'il n'y a aucun enregistrement
+  }
 
   public Mono<BadgeRecord> addBadgeRecord(String employeeId, BadgeDto badgeDto) {
     return employeeRepository
